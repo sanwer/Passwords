@@ -1,6 +1,8 @@
 #include "Passwords.h"
 #include <time.h>
 
+#define TIMER_DISABLE_TIMEOUT	1001
+
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -36,9 +38,10 @@ CPasswordsDlg::CPasswordsDlg()
 	chkLower = NULL;
 	chkNumber = NULL;
 	chkSymbol = NULL;
+	editLength = NULL;
+	editCount = NULL;
 	editPassword = NULL;
 	btnGenerator = NULL;
-	cRandChar = 0;
 }
 
 CPasswordsDlg::~CPasswordsDlg()
@@ -61,12 +64,14 @@ void CPasswordsDlg::InitWindow()
 	chkLower = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkLower")));
 	chkNumber = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkNumber")));
 	chkSymbol = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkSymbol")));
+	editLength = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editLength")));
+	editCount = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editCount")));
 	editPassword = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editPassword")));
 	btnGenerator = static_cast<CButtonUI*>(m_pm.FindControl(_T("btnGenerator")));
 	if (labTitle == NULL || editUpper == NULL|| editLower == NULL
 		|| editNumber == NULL || editSymbol == NULL  || chkUpper == NULL
 		|| chkLower == NULL || chkNumber == NULL || chkSymbol == NULL
-		|| editPassword == NULL || btnGenerator == NULL)
+		|| editLength == NULL|| editCount == NULL|| editPassword == NULL || btnGenerator == NULL)
 	{
 		MessageBox(NULL,_T("Loading resources failed!"),_T("Passwords"),MB_OK|MB_ICONERROR);
 		return;
@@ -90,42 +95,74 @@ void CPasswordsDlg::Notify(TNotifyUI& msg)
 	if (_tcsicmp(msg.sType,DUI_MSGTYPE_CLICK) == 0)
 	{
 		if (_tcsicmp(sCtrlName,_T("btnGenerator")) == 0){
-			CDuiString sTemplate,sPasswords,sLower,sUpper,sNumber,sSymbol;
-			if(chkUpper->IsSelected()){
+			CDuiString sTemplate,sPasswords,sLower,sUpper;
+			CDuiString sNumber,sSymbol,sLength,sCount;
+			btnGenerator->SetEnabled(false);
+			editPassword->SetText(_T(""));
+			if(chkUpper->IsSelected())
 				sUpper = editUpper->GetText();
-			}
-			if(chkLower->IsSelected()){
+			if(chkLower->IsSelected())
 				sLower = editLower->GetText();
-			}
-			if(chkNumber->IsSelected()){
+			if(chkNumber->IsSelected())
 				sNumber = editNumber->GetText();
-			}
-			if(chkSymbol->IsSelected()){
+			if(chkSymbol->IsSelected())
 				sSymbol = editSymbol->GetText();
-			}
 			sTemplate = sUpper + sLower + sNumber + sSymbol;
 			sTemplate.Replace(_T(" "),_T(""));
-			int nLength = sTemplate.GetLength();
-			srand((unsigned)time(NULL));
-			for(int i=200;i>0;i--){
-				srand((unsigned)i+cRandChar+time(NULL));
-				cRandChar = sTemplate.GetAt((i+rand()) % nLength);
-				sPasswords+=sTemplate.GetAt((i+cRandChar+rand()) % nLength);
+			sLength = editLength->GetText();
+			sCount = editCount->GetText();
+			TCHAR cRandChar = 0;
+			if(sTemplate.GetLength() == 0 || sLength.GetLength() == 0 || sCount.GetLength() == 0)
+				return;
+			int nLength = _ttoi(sLength.GetData());
+			if(nLength<=0)
+			{
+				nLength = 6;
+				editLength->SetText(_T("6"));
+			}
+			int nCount = _ttoi(sCount.GetData());
+			if(nCount<=0)
+			{
+				nCount = 1;
+				editCount->SetText(_T("1"));
+			}
+
+			for(int i=0;i<nCount;i++){
+				if(sPasswords.GetLength()>0)
+					sPasswords+=_T("\n");
+				for(int j=1;j<nLength;j++)
+					sPasswords+=GetRandChar(sTemplate);
 			}
 			editPassword->SetText(sPasswords);
-			return;
+			btnGenerator->SetEnabled(true);
 		}
 	}
 	else if (_tcsicmp(msg.sType,DUI_MSGTYPE_SELECTCHANGED) == 0)
 	{
-		if (_tcsicmp(sCtrlName,_T("chkUpper")) == 0){
-		}
-		else if (_tcsicmp(sCtrlName,_T("chkLower")) == 0){
-		}
-		else if (_tcsicmp(sCtrlName,_T("chkNumber")) == 0){
-		}
-		else if (_tcsicmp(sCtrlName,_T("chkSymbol")) == 0){
-		}
+		CDuiString sBuffer;
+		CCheckBoxUI* chkUI = (CCheckBoxUI*)msg.pSender;
+		if(chkUpper->IsSelected())
+			sBuffer += editUpper->GetText();
+		if(chkLower->IsSelected())
+			sBuffer += editLower->GetText();
+		if(chkNumber->IsSelected())
+			sBuffer += editNumber->GetText();
+		if(chkSymbol->IsSelected())
+			sBuffer += editSymbol->GetText();
+		sBuffer.Replace(_T(" "),_T(""));
+		if(sBuffer.GetLength() == 0)
+			chkUI->SetCheck(!chkUI->IsSelected());
+		//else
+		//	sTemplate = sBuffer;
 	}
 	return WindowImplBase::Notify(msg);
+}
+
+TCHAR CPasswordsDlg::GetRandChar(CDuiString& sTemplate, UINT nIncrement)
+{
+	static UINT nRandomSeed = 0;
+	UINT nTemplate = sTemplate.GetLength();
+	if(nRandomSeed < nTemplate)
+		srand(nRandomSeed = time(NULL));
+	return sTemplate.GetAt(rand() % nTemplate);
 }

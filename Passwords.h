@@ -33,6 +33,8 @@ public:
 	CPasswordsDlg();
 	~CPasswordsDlg();
 
+	TCHAR GetRandChar(CDuiString& sTemplate, UINT nIncrement=0);
+
 public:
 	LPCTSTR GetWindowClassName() const;
 	virtual void InitWindow();
@@ -52,9 +54,10 @@ private:
 	CCheckBoxUI* chkLower;
 	CCheckBoxUI* chkNumber;
 	CCheckBoxUI* chkSymbol;
+	CRichEditUI* editLength;
+	CRichEditUI* editCount;
 	CRichEditUI* editPassword;
 	CButtonUI* btnGenerator;
-	TCHAR cRandChar;
 };
 
 #endif
