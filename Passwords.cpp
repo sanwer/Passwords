@@ -130,7 +130,7 @@ void CPasswordsDlg::Notify(TNotifyUI& msg)
 			for(int i=0;i<nCount;i++){
 				if(sPasswords.GetLength()>0)
 					sPasswords+=_T("\n");
-				for(int j=1;j<nLength;j++)
+				for(int j=1;j<=nLength;j++)
 					sPasswords+=GetRandChar(sTemplate);
 			}
 			editPassword->SetText(sPasswords);
