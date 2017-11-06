@@ -82,7 +82,7 @@ void CPasswordsDlg::InitWindow()
 		return;
 	}
 
-	if(GetSystemDefaultLangID() == 0x0805){
+	if(GetSystemDefaultLangID() == 0x0804){
 		labTitle->SetText(_T("密码生成器 - Sanwer.com"));
 		labLength->SetText(_T("长度"));
 		labCount->SetText(_T("数量"));
