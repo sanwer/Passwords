@@ -19,7 +19,9 @@
 
 #include <windows.h>
 #include <objbase.h>
+#include <Winnls.h>
 #include "resource.h"
+#pragma comment(lib,"Kernel32.lib")
 
 #ifndef UILIB_STATIC
 #define UILIB_STATIC
@@ -54,7 +56,9 @@ private:
 	CCheckBoxUI* chkLower;
 	CCheckBoxUI* chkNumber;
 	CCheckBoxUI* chkSymbol;
+	CLabelUI* labLength;
 	CRichEditUI* editLength;
+	CLabelUI* labCount;
 	CRichEditUI* editCount;
 	CRichEditUI* editPassword;
 	CButtonUI* btnGenerator;

@@ -38,7 +38,9 @@ CPasswordsDlg::CPasswordsDlg()
 	chkLower = NULL;
 	chkNumber = NULL;
 	chkSymbol = NULL;
+	labLength = NULL;
 	editLength = NULL;
+	labCount = NULL;
 	editCount = NULL;
 	editPassword = NULL;
 	btnGenerator = NULL;
@@ -55,26 +57,37 @@ LPCTSTR CPasswordsDlg::GetWindowClassName() const
 
 void CPasswordsDlg::InitWindow()
 {
-	labTitle = static_cast<CLabelUI*>(m_pm.FindControl(_T("labTitle")));
-	editUpper = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editUpper")));
-	editLower = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editLower")));
-	editNumber = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editNumber")));
-	editSymbol = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editSymbol")));
-	chkUpper = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkUpper")));
-	chkLower = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkLower")));
-	chkNumber = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkNumber")));
-	chkSymbol = static_cast<CCheckBoxUI*>(m_pm.FindControl(_T("chkSymbol")));
-	editLength = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editLength")));
-	editCount = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editCount")));
-	editPassword = static_cast<CRichEditUI*>(m_pm.FindControl(_T("editPassword")));
-	btnGenerator = static_cast<CButtonUI*>(m_pm.FindControl(_T("btnGenerator")));
+	labTitle = static_cast<CLabelUI*>(m_Manager.FindControl(_T("labTitle")));
+	editUpper = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editUpper")));
+	editLower = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editLower")));
+	editNumber = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editNumber")));
+	editSymbol = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editSymbol")));
+	chkUpper = static_cast<CCheckBoxUI*>(m_Manager.FindControl(_T("chkUpper")));
+	chkLower = static_cast<CCheckBoxUI*>(m_Manager.FindControl(_T("chkLower")));
+	chkNumber = static_cast<CCheckBoxUI*>(m_Manager.FindControl(_T("chkNumber")));
+	chkSymbol = static_cast<CCheckBoxUI*>(m_Manager.FindControl(_T("chkSymbol")));
+	labLength = static_cast<CLabelUI*>(m_Manager.FindControl(_T("labLength")));
+	editLength = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editLength")));
+	labCount = static_cast<CLabelUI*>(m_Manager.FindControl(_T("labCount")));
+	editCount = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editCount")));
+	editPassword = static_cast<CRichEditUI*>(m_Manager.FindControl(_T("editPassword")));
+	btnGenerator = static_cast<CButtonUI*>(m_Manager.FindControl(_T("btnGenerator")));
 	if (labTitle == NULL || editUpper == NULL|| editLower == NULL
 		|| editNumber == NULL || editSymbol == NULL  || chkUpper == NULL
 		|| chkLower == NULL || chkNumber == NULL || chkSymbol == NULL
-		|| editLength == NULL|| editCount == NULL|| editPassword == NULL || btnGenerator == NULL)
+		|| labLength == NULL || editLength == NULL|| labCount == NULL
+		|| editCount == NULL || editPassword == NULL || btnGenerator == NULL)
 	{
 		MessageBox(NULL,_T("Loading resources failed!"),_T("Passwords"),MB_OK|MB_ICONERROR);
 		return;
+	}
+
+	if(GetSystemDefaultLangID() == 0x0805){
+		labTitle->SetText(_T("密码生成器 - Sanwer.com"));
+		labLength->SetText(_T("长度"));
+		labCount->SetText(_T("数量"));
+		btnGenerator->SetText(_T("生成"));
+		::SetWindowText(GetHWND(),_T("密码生成器"));
 	}
 }
 
